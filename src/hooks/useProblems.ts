@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { MergedProblem, RawProblem, ProblemModel } from '../types'
+import type { MergedProblem, RawProblem, ProblemModel, Contest } from '../types'
 
 const BASE_URL = import.meta.env.BASE_URL
 
@@ -17,17 +17,24 @@ export function useProblems(): UseProblemsResult {
   useEffect(() => {
     async function load() {
       try {
-        const [problemsRes, modelsRes] = await Promise.all([
+        const [problemsRes, modelsRes, contestsRes] = await Promise.all([
           fetch(`${BASE_URL}data/merged-problems.json`),
           fetch(`${BASE_URL}data/problem-models.json`),
+          fetch(`${BASE_URL}data/contests.json`),
         ])
 
-        if (!problemsRes.ok || !modelsRes.ok) {
+        if (!problemsRes.ok || !modelsRes.ok || !contestsRes.ok) {
           throw new Error('Failed to fetch data')
         }
 
         const rawProblems: RawProblem[] = await problemsRes.json()
         const models: Record<string, ProblemModel> = await modelsRes.json()
+        const contests: Contest[] = await contestsRes.json()
+
+        const contestStartMap = new Map<string, number>()
+        for (const c of contests) {
+          contestStartMap.set(c.id, c.start_epoch_second)
+        }
 
         const merged: MergedProblem[] = rawProblems.map((p) => ({
           id: p.id,
@@ -38,6 +45,7 @@ export function useProblems(): UseProblemsResult {
           difficulty: models[p.id]?.difficulty ?? null,
           solver_count: p.solver_count ?? null,
           submission_count: null,
+          contest_start_epoch_second: contestStartMap.get(p.contest_id) ?? null,
         }))
 
         setProblems(merged)

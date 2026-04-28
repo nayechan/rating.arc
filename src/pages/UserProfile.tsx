@@ -10,6 +10,7 @@ import {
   getDifficultyTierNumber,
   getSubTierByNumber,
   clipDifficulty,
+  getProblemDeprecationLevel,
 } from '../utils/tierConverter'
 import { RAINBOW_GRADIENT } from '../config/tierConfig'
 import { getAtCoderColor } from '../utils/atcoderColors'
@@ -118,12 +119,16 @@ export default function UserProfile() {
   const ratingBreakdown = (() => {
     if (problemsLoading || subLoading) return null
     const ratedProblems = acProblems.filter((p): p is typeof p & { difficulty: number } => p.difficulty !== null)
-    const top100Problems = [...ratedProblems]
+    // Exclude deprecated problems (≤2019) from rating weighting
+    const weightedProblems = ratedProblems.filter(
+      (p) => getProblemDeprecationLevel(p.contest_start_epoch_second) !== 'deprecated'
+    )
+    const top100Problems = [...weightedProblems]
       .sort((a, b) => b.difficulty - a.difficulty)
       .slice(0, 100)
     const top100TierNums = top100Problems.map((p) => getDifficultyTierNumber(p.difficulty))
     const tierSum = top100TierNums.reduce((acc, t) => acc + t, 0)
-    const countBonus = Math.round(200 * (1 - Math.pow(0.995, ratedProblems.length)))
+    const countBonus = Math.round(200 * (1 - Math.pow(0.995, weightedProblems.length)))
     return { tierSum, countBonus, total: tierSum + countBonus, top100Problems, top100TierNums, totalSolved: ratedProblems.length }
   })()
 
@@ -307,7 +312,9 @@ export default function UserProfile() {
                       firstAc <= contest.end
                     return (
                       <div key={p.id} className="flex items-center gap-3 text-sm">
-                        <TierBadge difficulty={p.difficulty} showLabel bright={solvedInContest} />
+                        <div className="w-20 flex-shrink-0">
+                          <TierBadge difficulty={p.difficulty} showLabel bright={solvedInContest} startEpochSecond={p.contest_start_epoch_second} />
+                        </div>
                         <span className="text-gray-500 font-mono text-xs w-20">
                           {p.contest_id.toUpperCase()}{p.problem_index}
                         </span>

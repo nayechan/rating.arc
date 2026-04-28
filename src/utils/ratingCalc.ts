@@ -1,11 +1,17 @@
-import { getDifficultyTierNumber } from './tierConverter'
+import { getDifficultyTierNumber, getProblemDeprecationLevel } from './tierConverter'
 
-export function calcSolvedAcRating(difficulties: number[]): number {
-  if (difficulties.length === 0) return 0
+export interface RatedProblemEntry {
+  difficulty: number
+  startEpochSecond: number | null
+}
 
-  const tierNums = difficulties.map(getDifficultyTierNumber).sort((a, b) => b - a).slice(0, 100)
+export function calcSolvedAcRating(entries: RatedProblemEntry[]): number {
+  if (entries.length === 0) return 0
+
+  const weighted = entries.filter((e) => getProblemDeprecationLevel(e.startEpochSecond) !== 'deprecated')
+  const tierNums = weighted.map((e) => getDifficultyTierNumber(e.difficulty)).sort((a, b) => b - a).slice(0, 100)
   const tierSum = tierNums.reduce((acc, t) => acc + t, 0)
-  const countBonus = 200 * (1 - Math.pow(0.995, difficulties.length))
+  const countBonus = 200 * (1 - Math.pow(0.995, weighted.length))
 
   return Math.round(tierSum + countBonus)
 }
