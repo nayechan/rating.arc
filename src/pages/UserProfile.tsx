@@ -264,7 +264,7 @@ export default function UserProfile() {
             <div className="flex flex-wrap gap-4">
               {MAJOR_TIERS.map((tier) => {
                 const count = tierStats[tier] ?? 0
-                const repDifficulty = { bronze: 100, silver: 300, gold: 700, platinum: 1500, diamond: 2100, master: 3000 }[tier]
+                const repDifficulty = { bronze: 100, silver: 600, gold: 1000, platinum: 1500, diamond: 2100, master: 3000 }[tier]
                 return (
                   <div key={tier} className="flex items-center gap-2">
                     <TierBadge difficulty={repDifficulty} showLabel majorTierOnly />
