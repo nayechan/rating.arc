@@ -13,7 +13,7 @@ export interface SubTier {
   borderColor: string
 }
 
-const COLORS: Record<Exclude<TierName, 'unrated'>, { color: string; bgColor: string; borderColor: string }> = {
+const COLORS: Record<Exclude<TierName, 'unrated' | 'grandmaster'>, { color: string; bgColor: string; borderColor: string }> = {
   bronze:   { color: '#CD7F32', bgColor: 'bg-amber-900',  borderColor: 'border-amber-700'  },
   silver:   { color: '#C0C0C0', bgColor: 'bg-gray-600',   borderColor: 'border-gray-400'   },
   gold:     { color: '#FFD700', bgColor: 'bg-yellow-700', borderColor: 'border-yellow-500' },
