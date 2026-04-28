@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useProblems } from '../hooks/useProblems'
 import { useUserSubmissions } from '../hooks/useUserSubmissions'
@@ -18,6 +18,71 @@ import TierBadge from '../components/TierBadge'
 import type { TierName } from '../config/tierConfig'
 
 const API_BASE = 'https://kenkoooo.com/atcoder/atcoder-api/v3'
+
+type ContestEntry = { start: number; end: number }
+
+function Top100Grid({
+  problems,
+  acFirstTimeMap,
+  contestMap,
+}: {
+  problems: { id: string; contest_id: string; difficulty: number; title?: string; name: string }[]
+  acFirstTimeMap: Map<string, number>
+  contestMap: Map<string, ContestEntry>
+}) {
+  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  return (
+    <div ref={containerRef} className="relative flex flex-wrap gap-x-3 gap-y-1">
+      {Array.from({ length: Math.ceil(problems.length / 10) }, (_, chunk) => (
+        <div key={chunk} className="flex gap-1">
+          {problems.slice(chunk * 10, chunk * 10 + 10).map((p, i) => {
+            const t = getDifficultyTierNumber(p.difficulty)
+            const st = getSubTierByNumber(t)
+            const firstAc = acFirstTimeMap.get(p.id)
+            const contest = contestMap.get(p.contest_id)
+            const inContest = firstAc !== undefined && contest !== undefined && firstAc >= contest.start && firstAc <= contest.end
+            const tooltipText = `${Math.round(p.difficulty)} — ${p.title ?? p.name}`
+            const href = `https://atcoder.jp/contests/${p.contest_id}/tasks/${p.id}`
+            return (
+              <a
+                key={i}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-bold border ${st.bgColor} ${st.borderColor} ${inContest ? 'animate-sparkle' : ''}`}
+                style={{ color: st.color }}
+                onMouseEnter={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const containerRect = containerRef.current!.getBoundingClientRect()
+                  setTooltip({
+                    text: tooltipText,
+                    x: rect.left - containerRect.left + rect.width / 2,
+                    y: rect.top - containerRect.top,
+                  })
+                }}
+                onMouseLeave={() => setTooltip(null)}
+              >
+                {st.level}
+              </a>
+            )
+          })}
+        </div>
+      ))}
+      {tooltip && (
+        <div
+          className="absolute z-50 pointer-events-none"
+          style={{ left: tooltip.x, top: tooltip.y, transform: 'translate(-50%, calc(-100% - 6px))' }}
+        >
+          <div className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white whitespace-nowrap shadow-lg">
+            {tooltip.text}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 const MAJOR_TIERS: Exclude<TierName, 'unrated' | 'grandmaster'>[] = ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'master']
 
@@ -159,39 +224,11 @@ export default function UserProfile() {
                     <span className="text-gray-300">Top 100 problems difficulty sum</span>
                     <span className="text-gray-200 font-semibold">+{ratingBreakdown.tierSum.toLocaleString()}</span>
                   </div>
-                  <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    {Array.from({ length: Math.ceil(ratingBreakdown.top100Problems.length / 10) }, (_, chunk) => (
-                      <div key={chunk} className="flex gap-1">
-                        {ratingBreakdown.top100Problems.slice(chunk * 10, chunk * 10 + 10).map((p, i) => {
-                          const t = getDifficultyTierNumber(p.difficulty)
-                          const st = getSubTierByNumber(t)
-                          const firstAc = acFirstTimeMap.get(p.id)
-                          const contest = contestMap.get(p.contest_id)
-                          const inContest = firstAc !== undefined && contest !== undefined && firstAc >= contest.start && firstAc <= contest.end
-                          const tooltipText = `${Math.round(p.difficulty)} — ${p.title ?? p.name}`
-                          const href = `https://atcoder.jp/contests/${p.contest_id}/tasks/${p.id}`
-                          return (
-                            <div key={i} className="relative group">
-                              <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-bold border ${st.bgColor} ${st.borderColor} ${inContest ? 'animate-sparkle' : ''}`}
-                                style={{ color: st.color }}
-                              >
-                                {st.level}
-                              </a>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:block z-50 pointer-events-none">
-                                <div className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white whitespace-nowrap shadow-lg">
-                                  {tooltipText}
-                                </div>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    ))}
-                  </div>
+                  <Top100Grid
+                    problems={ratingBreakdown.top100Problems}
+                    acFirstTimeMap={acFirstTimeMap}
+                    contestMap={contestMap}
+                  />
                 </div>
 
                 {/* Count bonus */}
