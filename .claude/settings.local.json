@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(node scripts/fetchData.mjs)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:kenkoooo.com)",
+      "WebFetch(domain:greasyfork.org)",
+      "Bash(xargs head *)",
+      "WebFetch(domain:api.github.com)"
+    ]
+  }
+}
