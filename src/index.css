@@ -8,11 +8,6 @@
   }
 }
 
-@keyframes sparkle {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.6); }
-}
-
 .animate-sparkle {
-  animation: sparkle 2s ease-in-out infinite;
+  filter: brightness(1.6);
 }

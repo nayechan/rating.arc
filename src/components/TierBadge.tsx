@@ -4,9 +4,10 @@ interface TierBadgeProps {
   difficulty: number | null
   showLabel?: boolean
   majorTierOnly?: boolean
+  bright?: boolean
 }
 
-export default function TierBadge({ difficulty, showLabel = true, majorTierOnly = false }: TierBadgeProps) {
+export default function TierBadge({ difficulty, showLabel = true, majorTierOnly = false, bright = false }: TierBadgeProps) {
   const tier = getSubTierFromDifficulty(difficulty)
 
   const label = (() => {
@@ -18,7 +19,7 @@ export default function TierBadge({ difficulty, showLabel = true, majorTierOnly 
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${tier.bgColor} ${tier.borderColor}`}
-      style={{ color: tier.color }}
+      style={{ color: tier.color, filter: bright ? 'brightness(1.6)' : undefined }}
     >
       {showLabel && label}
     </span>

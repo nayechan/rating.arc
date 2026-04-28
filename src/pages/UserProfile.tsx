@@ -30,7 +30,7 @@ function Top100Grid({
   acFirstTimeMap: Map<string, number>
   contestMap: Map<string, ContestEntry>
 }) {
-  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
+  const [tooltip, setTooltip] = useState<{ tierLabel: string; tierColor: string; title: string; x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   return (
@@ -43,7 +43,6 @@ function Top100Grid({
             const firstAc = acFirstTimeMap.get(p.id)
             const contest = contestMap.get(p.contest_id)
             const inContest = firstAc !== undefined && contest !== undefined && firstAc >= contest.start && firstAc <= contest.end
-            const tooltipText = `${Math.round(p.difficulty)} — ${p.title ?? p.name}`
             const href = `https://atcoder.jp/contests/${p.contest_id}/tasks/${p.id}`
             return (
               <a
@@ -57,7 +56,9 @@ function Top100Grid({
                   const rect = e.currentTarget.getBoundingClientRect()
                   const containerRect = containerRef.current!.getBoundingClientRect()
                   setTooltip({
-                    text: tooltipText,
+                    tierLabel: st.label,
+                    tierColor: st.color,
+                    title: p.title ?? p.name,
                     x: rect.left - containerRect.left + rect.width / 2,
                     y: rect.top - containerRect.top,
                   })
@@ -75,8 +76,10 @@ function Top100Grid({
           className="absolute z-50 pointer-events-none"
           style={{ left: tooltip.x, top: tooltip.y, transform: 'translate(-50%, calc(-100% - 6px))' }}
         >
-          <div className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white whitespace-nowrap shadow-lg">
-            {tooltip.text}
+          <div className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs whitespace-nowrap shadow-lg flex items-center gap-1.5">
+            <span className="font-bold" style={{ color: tooltip.tierColor }}>{tooltip.tierLabel}</span>
+            <span className="text-gray-400">|</span>
+            <span className="text-white">{tooltip.title}</span>
           </div>
         </div>
       )}
@@ -304,7 +307,7 @@ export default function UserProfile() {
                       firstAc <= contest.end
                     return (
                       <div key={p.id} className="flex items-center gap-3 text-sm">
-                        <TierBadge difficulty={p.difficulty} showLabel />
+                        <TierBadge difficulty={p.difficulty} showLabel bright={solvedInContest} />
                         <span className="text-gray-500 font-mono text-xs w-20">
                           {p.contest_id.toUpperCase()}{p.problem_index}
                         </span>
