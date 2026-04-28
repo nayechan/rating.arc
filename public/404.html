@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 2).join('/') +
+        '/?p=/' + l.pathname.slice(l.pathname.indexOf('/', 1) + 1) +
+        (l.search ? '&q=' + l.search.slice(1) : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

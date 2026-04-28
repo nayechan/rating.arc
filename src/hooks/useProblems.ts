@@ -18,7 +18,7 @@ export function useProblems(): UseProblemsResult {
     async function load() {
       try {
         const [problemsRes, modelsRes] = await Promise.all([
-          fetch(`${BASE_URL}data/problems.json`),
+          fetch(`${BASE_URL}data/merged-problems.json`),
           fetch(`${BASE_URL}data/problem-models.json`),
         ])
 
@@ -36,7 +36,7 @@ export function useProblems(): UseProblemsResult {
           name: p.name,
           title: p.title,
           difficulty: models[p.id]?.difficulty ?? null,
-          solver_count: null,
+          solver_count: p.solver_count ?? null,
           submission_count: null,
         }))
 

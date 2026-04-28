@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUTPUT_DIR = join(__dirname, '..', 'public', 'data')
 
 const ENDPOINTS = {
-  'problems.json': 'https://kenkoooo.com/atcoder/resources/problems.json',
+  'merged-problems.json': 'https://kenkoooo.com/atcoder/resources/merged-problems.json',
   'problem-models.json': 'https://kenkoooo.com/atcoder/resources/problem-models.json',
   'contest-problem.json': 'https://kenkoooo.com/atcoder/resources/contest-problem.json',
   'contests.json': 'https://kenkoooo.com/atcoder/resources/contests.json',

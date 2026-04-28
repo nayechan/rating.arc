@@ -4,6 +4,7 @@ export interface RawProblem {
   problem_index: string
   name: string
   title: string
+  solver_count: number | null
 }
 
 export interface ProblemModel {
