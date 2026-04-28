@@ -98,6 +98,7 @@ export default function UserProfile() {
   const [atcoderRating, setAtcoderRating] = useState<number | null>(null)
   const [ratingLoading, setRatingLoading] = useState(false)
   const [acFilter, setAcFilter] = useState<'rated' | 'all' | 'in-contest'>('rated')
+  const [acSort, setAcSort] = useState<'ac-time' | 'contest-date'>('ac-time')
   const [acPage, setAcPage] = useState(0)
 
   useEffect(() => {
@@ -151,9 +152,12 @@ export default function UserProfile() {
           return firstAc !== undefined && contest !== undefined && firstAc >= contest.start && firstAc <= contest.end
         })
       : acProblems.filter((p) => p.difficulty !== null)
+  const sortedAc = acSort === 'contest-date'
+    ? [...visibleAc].sort((a, b) => (b.contest_start_epoch_second ?? 0) - (a.contest_start_epoch_second ?? 0))
+    : visibleAc
   const AC_PAGE_SIZE = 20
-  const acTotalPages = Math.ceil(visibleAc.length / AC_PAGE_SIZE)
-  const recentAc = visibleAc.slice(acPage * AC_PAGE_SIZE, (acPage + 1) * AC_PAGE_SIZE)
+  const acTotalPages = Math.ceil(sortedAc.length / AC_PAGE_SIZE)
+  const recentAc = sortedAc.slice(acPage * AC_PAGE_SIZE, (acPage + 1) * AC_PAGE_SIZE)
   const loading = problemsLoading || subLoading || ratingLoading || contestsLoading
 
   if (!userId) return null
@@ -287,15 +291,26 @@ export default function UserProfile() {
               <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
                 Recent AC ({visibleAc.length} total)
               </h2>
-              <button
-                onClick={() => {
-                  setAcFilter((f) => f === 'rated' ? 'all' : f === 'all' ? 'in-contest' : 'rated')
-                  setAcPage(0)
-                }}
-                className="text-xs px-2 py-1 rounded border border-gray-700 text-gray-400 hover:text-gray-200 transition-colors"
-              >
-                {acFilter === 'rated' ? 'Show All' : acFilter === 'all' ? 'In-Contest Only' : 'Show Rated'}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setAcSort((s) => s === 'ac-time' ? 'contest-date' : 'ac-time')
+                    setAcPage(0)
+                  }}
+                  className="text-xs px-2 py-1 rounded border border-gray-700 text-gray-400 hover:text-gray-200 transition-colors"
+                >
+                  {acSort === 'ac-time' ? 'Sort: AC Date' : 'Sort: Contest Date'}
+                </button>
+                <button
+                  onClick={() => {
+                    setAcFilter((f) => f === 'rated' ? 'all' : f === 'all' ? 'in-contest' : 'rated')
+                    setAcPage(0)
+                  }}
+                  className="text-xs px-2 py-1 rounded border border-gray-700 text-gray-400 hover:text-gray-200 transition-colors"
+                >
+                  {acFilter === 'rated' ? 'Show All' : acFilter === 'all' ? 'In-Contest Only' : 'Show Rated'}
+                </button>
+              </div>
             </div>
             {recentAc.length === 0 ? (
               <p className="text-gray-600 text-sm">No AC submissions found.</p>
@@ -313,7 +328,7 @@ export default function UserProfile() {
                     return (
                       <div key={p.id} className="flex items-center gap-3 text-sm">
                         <div className="w-20 flex-shrink-0">
-                          <TierBadge difficulty={p.difficulty} showLabel bright={solvedInContest} startEpochSecond={p.contest_start_epoch_second} />
+                          <TierBadge difficulty={p.difficulty} showLabel bright={solvedInContest} startEpochSecond={p.contest_start_epoch_second} suppressFade />
                         </div>
                         <span className="text-gray-500 font-mono text-xs w-20">
                           {p.contest_id.toUpperCase()}{p.problem_index}
