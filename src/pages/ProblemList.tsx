@@ -1,18 +1,20 @@
 import { useState, useMemo } from 'react'
-
-function seededRandom(seed: number, id: string): number {
-  let h = seed * 2654435761
-  for (let i = 0; i < id.length; i++) {
-    h = Math.imul(31, h) + id.charCodeAt(i) | 0
-  }
-  return (h >>> 0) / 0xFFFFFFFF
-}
 import { useProblems } from '../hooks/useProblems'
 import ProblemTable from '../components/ProblemTable'
 import FilterPanel, { defaultFilters, type FilterState } from '../components/FilterPanel'
 import { getSubTierFromDifficulty } from '../utils/tierConverter'
 import { ALL_SUB_TIERS } from '../config/tierConfig'
 import { getContestType } from '../types'
+
+function seededRandom(seed: number, id: string): number {
+  let h = seed * 0x9e3779b9 | 0
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i)
+    h = Math.imul(h, 0x9e3779b9)
+    h ^= h >>> 16
+  }
+  return (h >>> 0) / 0xFFFFFFFF
+}
 
 export default function ProblemList() {
   const { problems, loading } = useProblems()
