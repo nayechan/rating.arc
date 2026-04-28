@@ -49,14 +49,14 @@ export default function UserProfile() {
 
   const ratingBreakdown = (() => {
     if (problemsLoading || subLoading) return null
-    const ratedDiffs = acProblems.map((p) => p.difficulty).filter((d): d is number => d !== null)
-    const top100TierNums = ratedDiffs
-      .map(getDifficultyTierNumber)
-      .sort((a, b) => b - a)
+    const ratedProblems = acProblems.filter((p): p is typeof p & { difficulty: number } => p.difficulty !== null)
+    const top100Problems = [...ratedProblems]
+      .sort((a, b) => b.difficulty - a.difficulty)
       .slice(0, 100)
+    const top100TierNums = top100Problems.map((p) => getDifficultyTierNumber(p.difficulty))
     const tierSum = top100TierNums.reduce((acc, t) => acc + t, 0)
-    const countBonus = Math.round(200 * (1 - Math.pow(0.995, ratedDiffs.length)))
-    return { tierSum, countBonus, total: tierSum + countBonus, top100TierNums, totalSolved: ratedDiffs.length }
+    const countBonus = Math.round(200 * (1 - Math.pow(0.995, ratedProblems.length)))
+    return { tierSum, countBonus, total: tierSum + countBonus, top100Problems, top100TierNums, totalSolved: ratedProblems.length }
   })()
 
   const tierStats = (() => {
@@ -160,19 +160,28 @@ export default function UserProfile() {
                     <span className="text-gray-200 font-semibold">+{ratingBreakdown.tierSum.toLocaleString()}</span>
                   </div>
                   <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    {Array.from({ length: Math.ceil(ratingBreakdown.top100TierNums.length / 10) }, (_, chunk) => (
+                    {Array.from({ length: Math.ceil(ratingBreakdown.top100Problems.length / 10) }, (_, chunk) => (
                       <div key={chunk} className="flex gap-1">
-                        {ratingBreakdown.top100TierNums.slice(chunk * 10, chunk * 10 + 10).map((t, i) => {
+                        {ratingBreakdown.top100Problems.slice(chunk * 10, chunk * 10 + 10).map((p, i) => {
+                          const t = getDifficultyTierNumber(p.difficulty)
                           const st = getSubTierByNumber(t)
+                          const firstAc = acFirstTimeMap.get(p.id)
+                          const contest = contestMap.get(p.contest_id)
+                          const inContest = firstAc !== undefined && contest !== undefined && firstAc >= contest.start && firstAc <= contest.end
+                          const tooltip = `${Math.round(p.difficulty)} — ${p.title ?? p.name}`
+                          const href = `https://atcoder.jp/contests/${p.contest_id}/tasks/${p.id}`
                           return (
-                            <span
+                            <a
                               key={i}
-                              className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-bold border ${st.bgColor} ${st.borderColor}`}
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-bold border ${st.bgColor} ${st.borderColor} ${inContest ? 'animate-sparkle' : ''}`}
                               style={{ color: st.color }}
-                              title={st.label}
+                              title={tooltip}
                             >
                               {st.level}
-                            </span>
+                            </a>
                           )
                         })}
                       </div>
