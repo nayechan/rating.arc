@@ -49,14 +49,14 @@ const TIER_DEFS: TierDef[] = [
   ['platinum', 1,  1866,     2000],
   ['diamond',  5,  2000,     2200],
   ['diamond',  4,  2200,     2400],
-  ['diamond',  3,  2400,     2600],
-  ['diamond',  2,  2600,     2800],
-  ['diamond',  1,  2800,     3000],
-  ['master',   5,  3000,     3200],
-  ['master',   4,  3200,     3400],
-  ['master',   3,  3400,     3600],
-  ['master',   2,  3600,     3800],
-  ['master',   1,  3800,     Infinity],
+  ['diamond',  3,  2400,     2533],
+  ['diamond',  2,  2533,     2666],
+  ['diamond',  1,  2666,     2800],
+  ['master',   5,  2800,     3000],
+  ['master',   4,  3000,     3200],
+  ['master',   3,  3200,     3400],
+  ['master',   2,  3400,     3600],
+  ['master',   1,  3600,     Infinity],
 ]
 
 export const ALL_SUB_TIERS: SubTier[] = TIER_DEFS.map(([tier, level, min, max]) => {
