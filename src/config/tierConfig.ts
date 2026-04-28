@@ -27,19 +27,19 @@ type TierDef = [Exclude<TierName, 'unrated' | 'grandmaster'>, SubTierLevel, numb
 // [tier, level, min (inclusive), max (exclusive)]
 // B5 lower bound is -Infinity to catch negative IRT estimates
 const TIER_DEFS: TierDef[] = [
-  ['bronze',   5, -Infinity, 0   ],  // B5: catches negative IRT estimates (raw difficulty < 0)
-  ['bronze',   4,  0,        75  ],
-  ['bronze',   3,  75,       175 ],
-  ['bronze',   2,  175,      300 ],
-  ['bronze',   1,  300,      400 ],
-  ['silver',   5,  400,      466 ],
-  ['silver',   4,  466,      533 ],
-  ['silver',   3,  533,      600 ],
-  ['silver',   2,  600,      666 ],
-  ['silver',   1,  666,      733 ],
-  ['gold',     5,  733,      800 ],
-  ['gold',     4,  800,      900 ],
-  ['gold',     3,  900,      1000],
+  ['bronze',   5, -Infinity, 100 ],  // B5: catches negative IRT estimates (raw difficulty < 0)
+  ['bronze',   4,  100,      200 ],
+  ['bronze',   3,  200,      300 ],
+  ['bronze',   2,  300,      400 ],
+  ['bronze',   1,  400,      466 ],
+  ['silver',   5,  466,      533 ],
+  ['silver',   4,  533,      600 ],
+  ['silver',   3,  600,      666 ],
+  ['silver',   2,  666,      733 ],
+  ['silver',   1,  733,      800 ],
+  ['gold',     5,  800,      866 ],
+  ['gold',     4,  866,      933 ],
+  ['gold',     3,  933,      1000],
   ['gold',     2,  1000,     1100],
   ['gold',     1,  1100,     1200],
   ['platinum', 5,  1200,     1400],
