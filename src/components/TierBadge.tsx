@@ -18,7 +18,7 @@ export default function TierBadge({ difficulty, showLabel = true, majorTierOnly 
 
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${tier.bgColor} ${tier.borderColor}`}
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border whitespace-nowrap ${tier.bgColor} ${tier.borderColor}`}
       style={{ color: tier.color, filter: bright ? 'brightness(1.6)' : undefined }}
     >
       {showLabel && label}
