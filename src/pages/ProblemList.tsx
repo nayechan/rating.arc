@@ -1,4 +1,12 @@
 import { useState, useMemo } from 'react'
+
+function seededRandom(seed: number, id: string): number {
+  let h = seed * 2654435761
+  for (let i = 0; i < id.length; i++) {
+    h = Math.imul(31, h) + id.charCodeAt(i) | 0
+  }
+  return (h >>> 0) / 0xFFFFFFFF
+}
 import { useProblems } from '../hooks/useProblems'
 import ProblemTable from '../components/ProblemTable'
 import FilterPanel, { defaultFilters, type FilterState } from '../components/FilterPanel'
@@ -52,6 +60,9 @@ export default function ProblemList() {
         return true
       })
       .sort((a, b) => {
+        if (filters.sortKey === 'random') {
+          return seededRandom(filters.randomSeed, a.id) - seededRandom(filters.randomSeed, b.id)
+        }
         const dir = filters.sortDir === 'asc' ? 1 : -1
         if (filters.sortKey === 'rating') {
           return ((a.difficulty ?? -1) - (b.difficulty ?? -1)) * dir

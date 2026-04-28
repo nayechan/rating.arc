@@ -9,8 +9,9 @@ export interface FilterState {
   contestTypes: Set<ContestType['id']>
   ratingMin: string
   ratingMax: string
-  sortKey: 'rating' | 'solvers'
+  sortKey: 'rating' | 'solvers' | 'random'
   sortDir: 'asc' | 'desc'
+  randomSeed: number
 }
 
 export function defaultFilters(): FilterState {
@@ -22,6 +23,7 @@ export function defaultFilters(): FilterState {
     ratingMax: '',
     sortKey: 'rating',
     sortDir: 'asc',
+    randomSeed: 0,
   }
 }
 
@@ -170,6 +172,16 @@ export default function FilterPanel({ filters, onChange }: FilterPanelProps) {
                 {filters.sortKey === key && (filters.sortDir === 'asc' ? ' ↑' : ' ↓')}
               </button>
             ))}
+            <button
+              onClick={() => onChange({ ...filters, sortKey: 'random', randomSeed: Math.random() })}
+              className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${
+                filters.sortKey === 'random'
+                  ? 'bg-blue-700 border-blue-500 text-white'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
+              }`}
+            >
+              Random ⟳
+            </button>
           </div>
         </div>
       </div>
