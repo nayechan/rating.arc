@@ -1,5 +1,25 @@
 import { ALL_SUB_TIERS, UNRATED_CONFIG, GRAND_MASTER_CONFIG, type SubTier } from '../config/tierConfig'
 
+// 2020-01-01 00:00:00 UTC
+const EPOCH_2020 = 1577836800
+// 2022-01-01 00:00:00 UTC
+const EPOCH_2022 = 1640995200
+
+export type DeprecationLevel = 'normal' | 'fade' | 'deprecated'
+
+/**
+ * Returns the deprecation level of a problem based on its contest date.
+ * deprecated (≤2019): excluded from rating weighting, shown dimmed
+ * fade (2020–2021): included in rating, shown slightly dimmed
+ * normal (≥2022): no treatment
+ */
+export function getProblemDeprecationLevel(startEpochSecond: number | null): DeprecationLevel {
+  if (startEpochSecond === null) return 'normal'
+  if (startEpochSecond < EPOCH_2020) return 'deprecated'
+  if (startEpochSecond < EPOCH_2022) return 'fade'
+  return 'normal'
+}
+
 export type TierInfo = SubTier | typeof UNRATED_CONFIG | typeof GRAND_MASTER_CONFIG
 
 /**

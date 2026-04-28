@@ -32,6 +32,7 @@ export interface MergedProblem {
   difficulty: number | null
   solver_count: number | null
   submission_count: number | null
+  contest_start_epoch_second: number | null
 }
 
 export interface Contest {

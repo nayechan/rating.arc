@@ -42,7 +42,7 @@ function ProblemRow({ problem, acSet, triedSet }: { problem: MergedProblem; acSe
   return (
     <tr className={`border-b border-gray-800 transition-colors ${rowBg}`}>
       <td className="px-4 py-2.5 w-28">
-        <TierBadge difficulty={problem.difficulty} />
+        <TierBadge difficulty={problem.difficulty} startEpochSecond={problem.contest_start_epoch_second} />
       </td>
       <td className="px-4 py-2.5 font-mono text-sm text-gray-300 w-28">{displayId}</td>
       <td className="px-4 py-2.5">
