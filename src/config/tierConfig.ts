@@ -22,7 +22,7 @@ const COLORS: Record<Exclude<TierName, 'unrated' | 'grandmaster'>, { color: stri
   master:   { color: '#9333EA', bgColor: 'bg-purple-950', borderColor: 'border-purple-500' },
 }
 
-type TierDef = [Exclude<TierName, 'unrated'>, SubTierLevel, number, number]
+type TierDef = [Exclude<TierName, 'unrated' | 'grandmaster'>, SubTierLevel, number, number]
 
 // [tier, level, min (inclusive), max (exclusive)]
 // B5 lower bound is -Infinity to catch negative IRT estimates
