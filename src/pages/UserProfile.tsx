@@ -168,20 +168,25 @@ export default function UserProfile() {
                           const firstAc = acFirstTimeMap.get(p.id)
                           const contest = contestMap.get(p.contest_id)
                           const inContest = firstAc !== undefined && contest !== undefined && firstAc >= contest.start && firstAc <= contest.end
-                          const tooltip = `${Math.round(p.difficulty)} — ${p.title ?? p.name}`
+                          const tooltipText = `${Math.round(p.difficulty)} — ${p.title ?? p.name}`
                           const href = `https://atcoder.jp/contests/${p.contest_id}/tasks/${p.id}`
                           return (
-                            <a
-                              key={i}
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-bold border ${st.bgColor} ${st.borderColor} ${inContest ? 'animate-sparkle' : ''}`}
-                              style={{ color: st.color }}
-                              title={tooltip}
-                            >
-                              {st.level}
-                            </a>
+                            <div key={i} className="relative group">
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`inline-flex items-center justify-center w-7 h-7 rounded text-xs font-bold border ${st.bgColor} ${st.borderColor} ${inContest ? 'animate-sparkle' : ''}`}
+                                style={{ color: st.color }}
+                              >
+                                {st.level}
+                              </a>
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:block z-50 pointer-events-none">
+                                <div className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white whitespace-nowrap shadow-lg">
+                                  {tooltipText}
+                                </div>
+                              </div>
+                            </div>
                           )
                         })}
                       </div>
