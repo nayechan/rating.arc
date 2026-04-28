@@ -9,7 +9,7 @@ export interface FilterState {
   contestTypes: Set<ContestType['id']>
   ratingMin: string
   ratingMax: string
-  sortKey: 'rating' | 'solvers' | 'random'
+  sortKey: 'rating' | 'solvers' | 'date' | 'random'
   sortDir: 'asc' | 'desc'
   randomSeed: number
 }
@@ -152,14 +152,14 @@ export default function FilterPanel({ filters, onChange }: FilterPanelProps) {
         <div>
           <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Sort</p>
           <div className="flex gap-2">
-            {(['rating', 'solvers'] as const).map((key) => (
+            {(['rating', 'solvers', 'date'] as const).map((key) => (
               <button
                 key={key}
                 onClick={() => {
                   if (filters.sortKey === key) {
                     onChange({ ...filters, sortDir: filters.sortDir === 'asc' ? 'desc' : 'asc' })
                   } else {
-                    onChange({ ...filters, sortKey: key, sortDir: 'asc' })
+                    onChange({ ...filters, sortKey: key, sortDir: key === 'date' ? 'desc' : 'asc' })
                   }
                 }}
                 className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${
@@ -168,7 +168,7 @@ export default function FilterPanel({ filters, onChange }: FilterPanelProps) {
                     : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
                 }`}
               >
-                {key === 'rating' ? 'Rating' : 'Solvers'}
+                {key === 'rating' ? 'Rating' : key === 'solvers' ? 'Solvers' : 'Date'}
                 {filters.sortKey === key && (filters.sortDir === 'asc' ? ' ↑' : ' ↓')}
               </button>
             ))}

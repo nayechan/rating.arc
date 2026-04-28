@@ -69,6 +69,9 @@ export default function ProblemList() {
         if (filters.sortKey === 'rating') {
           return ((a.difficulty ?? -1) - (b.difficulty ?? -1)) * dir
         }
+        if (filters.sortKey === 'date') {
+          return ((a.contest_start_epoch_second ?? 0) - (b.contest_start_epoch_second ?? 0)) * dir
+        }
         return ((a.solver_count ?? 0) - (b.solver_count ?? 0)) * dir
       })
   }, [problems, filters, search])
